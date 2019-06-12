@@ -7,7 +7,7 @@ public class GameMap {
 
 	private int sizeX;
 	private int sizeY;
-	private Map<Integer,Boolean> aliveCell;
+	private HashMap<Integer,Boolean> aliveCell;
 	
 	public GameMap(int sizeX, int sizeY, HashMap<Integer,Boolean> aliveCell) {
 		super();
@@ -18,16 +18,31 @@ public class GameMap {
 	
 	public void update() {
 		for(Integer position:aliveCell.keySet()) {
-		updateSelf(position);
-		updateNeighbour(position);
+			int xTemp = getxOfPosition(position);
+			int yTemp = getyOfPosition(position);
+			updateSelf(xTemp,yTemp);
+			updateNeighbour(xTemp,yTemp);
 		}
 	}
 	
-	private void updateSelf(int position) {
-		
+	private void updateSelf(int x,int y) {
+		int numOfNeighbour =0 ;
+		for(int i = x-1;i <=x+1;i++) {
+			for(int j = y-1;j<=y+1;j++) {
+				if((i==x)&&(j==y)) {
+					continue;
+				}
+				if(aliveCell.containsKey(assemblePosiotion(i, j))) {
+					numOfNeighbour++;
+				}
+			}
+		}
+		if((numOfNeighbour<2)||(numOfNeighbour>3)) {
+			aliveCell.remove(assemblePosiotion(x, y));
+		}
 	}
 	
-	private void updateNeighbour(int poisition) {
+	private void updateNeighbour(int x,int y) {
 		
 	}
 	
@@ -41,7 +56,19 @@ public class GameMap {
 		return y;
 	}
 	
+	private Integer assemblePosiotion(int x,int y) {
+		return new Integer(y*sizeX+x);
+	}
+	
 	public void display() {
 		
+	}
+
+	public HashMap<Integer, Boolean> getAliveCell() {
+		return aliveCell;
+	}
+
+	public void setAliveCell(HashMap<Integer, Boolean> aliveCell) {
+		this.aliveCell = aliveCell;
 	}
 }
