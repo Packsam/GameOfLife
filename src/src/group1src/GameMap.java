@@ -1,15 +1,15 @@
 package group1src;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GameMap {
 
 	private int sizeX;
 	private int sizeY;
-	private HashMap<Integer,Boolean> aliveCell;
+	private ConcurrentHashMap<Integer,Boolean> aliveCell;
 	
-	public GameMap(int sizeX, int sizeY, HashMap<Integer,Boolean> aliveCell) {
+	public GameMap(int sizeX, int sizeY, ConcurrentHashMap<Integer,Boolean> aliveCell) {
 		super();
 		this.sizeX = sizeX;
 		this.sizeY = sizeY;
@@ -17,16 +17,18 @@ public class GameMap {
 	}
 	
 	public void update() {
+		ConcurrentHashMap<Integer,Boolean> tempAliveCell = aliveCell;
 		for(Integer position:aliveCell.keySet()) {
 			int xTemp = getxOfPosition(position);
 			int yTemp = getyOfPosition(position);
-			updateSelf(xTemp,yTemp);
-			updateNeighbour(xTemp,yTemp);
+			updateSelf(xTemp,yTemp,tempAliveCell);
+			updateNeighbour(xTemp,yTemp,tempAliveCell);
+			aliveCell = tempAliveCell;
 		}
 	}
 	
-	private void updateSelf(int x,int y) {
-		int numOfNeighbour =0 ;
+	private void updateSelf(int x,int y,ConcurrentHashMap<Integer, Boolean> tempAliveCell) {
+		int numOfNeighbour =0;
 		for(int i = x-1;i <=x+1;i++) {
 			for(int j = y-1;j<=y+1;j++) {
 				if((i==x)&&(j==y)) {
@@ -37,13 +39,26 @@ public class GameMap {
 				}
 			}
 		}
-		if((numOfNeighbour<2)||(numOfNeighbour>3)) {
-			aliveCell.remove(assemblePosiotion(x, y));
+		if(aliveCell.containsKey(assemblePosiotion(x, y))) {
+			if((numOfNeighbour<2)||(numOfNeighbour>3)) {
+				tempAliveCell.remove(assemblePosiotion(x, y));
+			}
+		}else {
+			if(numOfNeighbour==3) {
+				tempAliveCell.put(assemblePosiotion(x, y), true);
+			}
 		}
 	}
 	
-	private void updateNeighbour(int x,int y) {
-		
+	private void updateNeighbour(int x,int y,ConcurrentHashMap<Integer, Boolean> tempAliveCell) {
+		for(int i = x-1;i<=x+1;i++) {
+			for (int j = y-1;j<=y+1;j++) {
+				if((i==x)&&(j==y)) {
+					continue;
+				}
+				updateSelf(i, j,tempAliveCell);
+			}
+		}
 	}
 	
 	private int getxOfPosition(int position) {
@@ -64,11 +79,11 @@ public class GameMap {
 		
 	}
 
-	public HashMap<Integer, Boolean> getAliveCell() {
+	public ConcurrentHashMap<Integer, Boolean> getAliveCell() {
 		return aliveCell;
 	}
 
-	public void setAliveCell(HashMap<Integer, Boolean> aliveCell) {
+	public void setAliveCell(ConcurrentHashMap<Integer, Boolean> aliveCell) {
 		this.aliveCell = aliveCell;
 	}
 }
