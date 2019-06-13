@@ -25,7 +25,6 @@ public class GameFrame extends JFrame{
 	JButton[][] cells;
 	static GameFrame gf;
 	int speed;
-	//Boolean flag = false;
 	
 	public static void main(String[] args) {
 		gf = new GameFrame();
@@ -33,8 +32,6 @@ public class GameFrame extends JFrame{
 		gf.setVisible(true);
 		gf.setSize(1000, 1000);
 		gf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		//gf.upadateFrame();
-		
 	}
 	
 	public void init() {
@@ -42,16 +39,13 @@ public class GameFrame extends JFrame{
 		speed = 1000;
 		
 		this.setLayout(new BorderLayout());
-		
 		title.setFont(new Font (Font.DIALOG, Font.BOLD, 50)); 
 		this.add(title, BorderLayout.NORTH);
 		
 		final HashMap<Integer, Boolean> map = new HashMap<>();
-		
 		gameMap = new GameMap(20,20,map);
 		
 		JPanel gameTable = new JPanel();
-		
 		gameTable.setLayout(new GridLayout(gameMap.getSizeY(),gameMap.getSizeX()));
 		gameTable.setPreferredSize(new Dimension(100,100));
 		gameTable.setSize(100, 100);
@@ -81,29 +75,21 @@ public class GameFrame extends JFrame{
 		
 		this.add(gameTable, BorderLayout.CENTER);
 		
-		Font f = new Font("宋体",Font.BOLD,16);
+		Font f = new Font("Times new Roman",Font.BOLD,16);
 		
 		JPanel optionPanel = new JPanel(new FlowLayout());
 		JButton start = new JButton("start");
-		JButton next = new JButton("next");
-		JButton stop = new JButton("stop");
 		start.setFont(f);
-		next.setFont(f);
-		stop.setFont(f);
-		start.setPreferredSize(new Dimension(100,50));
-		stop.setPreferredSize(new Dimension(100,50));
-		next.setPreferredSize(new Dimension(100,50));
+		start.setPreferredSize(new Dimension(120,50));
 		optionPanel.add(start);
-		optionPanel.add(next);
-		optionPanel.add(stop);
+
 		
-		JButton speedUp = new JButton("+");
-		JButton speedDown = new JButton("-");
-		speedUp.setPreferredSize(new Dimension(100,50));
-		speedDown.setPreferredSize(new Dimension(100,50));
+		JButton speedUp = new JButton("up");
+		JButton speedDown = new JButton("down");
+		speedUp.setPreferredSize(new Dimension(120,50));
+		speedDown.setPreferredSize(new Dimension(120,50));
 		optionPanel.add(speedUp);
 		optionPanel.add(speedDown);
-		
 		this.add(optionPanel,BorderLayout.SOUTH);
 		
 		final Thread t = new Thread(new Runnable() {
@@ -148,33 +134,7 @@ public class GameFrame extends JFrame{
 				}
 			}
 			
-		});
-		
-//		stop.addActionListener(new ActionListener() {
-//			
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				// TODO Auto-generated method stub
-//				try {
-//					t.wait();
-//				} catch (InterruptedException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}
-//			}
-//		});
-//		
-//		next.addActionListener(new ActionListener() {
-//			
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				// TODO Auto-generated method stub
-//				if(!t.isInterrupted()){
-//					t.interrupt();
-//				}
-//			}
-//		});
-		
+		});	
 	}
 
 	
@@ -187,9 +147,6 @@ public class GameFrame extends JFrame{
 	}
 	
 	public void upadateFrame() {
-//		initTable();
-//		gameMap.update();
-//		showCells();
 		while(true) {
 			initTable();
 			gameMap.update();
@@ -197,7 +154,6 @@ public class GameFrame extends JFrame{
 			try {
 				Thread.sleep(speed);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
